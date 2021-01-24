@@ -21,8 +21,29 @@ const styles = {
 class Applications extends React.Component {
   getTaskDetails = data => {
     data.service = data.service.toUpperCase();
+    if(data.activityType){
+      switch(data.activityType){
+        case "UPDATE_CONNECTION_HOLDER_INFO" :  window.localStorage.setItem("wns_workflow","WS_RENAME"); break;
+        case "REACTIVATE_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTIONA"); break;
+        case "TEMPORARY_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;
+        case "APPLY_FOR_REGULAR_INFO":  window.localStorage.setItem("wns_workflow","NewWS1"); break;
+        case "NEW_WS_CONNECTION":  window.localStorage.setItem("wns_workflow","NewWS1"); break;
+        case "PERMANENT_DISCONNECTION":  window.localStorage.setItem("wns_workflow","WS_DISCONNECTION"); break;
+        case "CONNECTION_CONVERSION":  window.localStorage.setItem("wns_workflow","WS_CONVERSION"); break;
+        case "NEW_TUBEWELL_CONNECTION":  window.localStorage.setItem("wns_workflow","WS_TUBEWELL"); break;
+      }
+}
     window.location.href = `/citizen/wns/search-preview?applicationNumber=${data.applicationNo}&history=${true}&tenantId=${data.property.tenantId}&service=${data.service}`
   }
+
+  titleCasingStatus = (status) => {
+    let splitStr = status.toLowerCase().split('_');
+    for (let i = 0; i < splitStr.length; i++) {
+      splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+    }
+    return splitStr.join(' ');
+  }
+
   render() {
     const { myApplicationResults, classes } = this.props;
     return (
@@ -76,7 +97,7 @@ class Applications extends React.Component {
                         </Grid>
                         <Grid item md={8} xs={6}>
                           <LabelContainer
-                            labelName={item.property.owners.map(owner => owner.name)}
+                            labelName={item.property.owners.map(owner =>owner.name).join(",")}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />
@@ -108,7 +129,7 @@ class Applications extends React.Component {
                         </Grid>
                         <Grid item md={8} xs={6}>
                           <Label
-                            labelName={item.applicationStatus}
+                            labelName={this.titleCasingStatus(item.applicationStatus)}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />
